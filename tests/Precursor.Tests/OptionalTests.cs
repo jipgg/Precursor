@@ -99,11 +99,11 @@ public unsafe class Optional_DelegatePointerTests {
 }
 
 public class Optional_InvocableTests {
-   struct Invoker : IInvocable<Foo, Foo> {
+   struct Invoker : IInvoker<Foo, Foo> {
       public Foo Invoke(Foo f) => new Foo(f.X * 2);
    }
 
-   struct InvokerOpt : IInvocable<Foo, Optional> {
+   struct InvokerOpt : IInvoker<Foo, Optional> {
       public Optional Invoke(Foo f) => new(new Foo(f.X * 2));
    }
 
@@ -231,11 +231,11 @@ public unsafe class RefOptional_DelegatePointerTests {
 }
 
 public class RefOptional_InvocableTests {
-   struct Invoker : IInvocable<RefFoo, RefFoo> {
+   struct Invoker : IInvoker<RefFoo, RefFoo> {
       public RefFoo Invoke(RefFoo f) => new RefFoo(f.X * 2);
    }
 
-   struct InvokerOpt : IInvocable<RefFoo, RefOptional> {
+   struct InvokerOpt : IInvoker<RefFoo, RefOptional> {
       public RefOptional Invoke(RefFoo f) => new(new RefFoo(f.X * 2));
    }
 

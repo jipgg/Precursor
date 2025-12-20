@@ -79,39 +79,18 @@ public class Optional_BindTests {
    }
 }
 
-public unsafe class Optional_DelegatePointerTests {
-   static Foo Double(Foo f) => new Foo(f.X * 2);
-   static Optional DoubleOpt(Foo f) => new(new Foo(f.X * 2));
-
-   [Fact]
-   public void Map_with_delegate_pointer_works() {
-      var o = new Optional(new Foo(3))
-          .Map(&Double);
-
-      o.Value!.X.Should().Be(6);
-   }
-
-   [Fact]
-   public void AndThen_with_delegate_pointer_works() {
-      var o = new Optional(new Foo(3))
-          .AndThen(&DoubleOpt);
-
-      o.Value!.X.Should().Be(6);
-   }
-}
-
 public class Optional_InvokerTests {
    struct Invoker : IInvoker<Foo, Foo> {
       public Foo Invoke(Foo f) => new Foo(f.X * 2);
    }
-   struct StaticInvoker : IStaticInvoker<Foo, Foo> {
+   struct Invocable : IInvocable<Foo, Foo> {
       public static Foo Invoke(Foo f) => new Foo(f.X * 2);
    }
 
    struct InvokerOpt : IInvoker<Foo, Optional> {
       public Optional Invoke(Foo f) => new(new Foo(f.X * 2));
    }
-   struct StaticInvokerOpt : IStaticInvoker<Foo, Optional> {
+   struct InvocableOpt : IInvocable<Foo, Optional> {
       public static Optional Invoke(Foo f) => new(new Foo(f.X * 2));
    }
 
@@ -125,7 +104,7 @@ public class Optional_InvokerTests {
    [Fact]
    public void Map_with_IStaticInvoker_works() {
       var o = new Optional(new Foo(4))
-          .Map<StaticInvoker, Foo>();
+          .Map<Invocable, Foo>();
 
       o.Value!.X.Should().Be(8);
    }
@@ -140,7 +119,7 @@ public class Optional_InvokerTests {
    [Fact]
    public void AndThen_with_IStaticInvoker_works() {
       var o = new Optional(new Foo(4))
-          .AndThen<StaticInvokerOpt, Foo>();
+          .AndThen<InvocableOpt, Foo>();
 
       o.Value!.X.Should().Be(8);
    }
@@ -231,39 +210,18 @@ public class RefOptional_BindTests {
    }
 }
 
-public unsafe class RefOptional_DelegatePointerTests {
-   static RefFoo Double(RefFoo f) => new RefFoo(f.X * 2);
-   static RefOptional DoubleOpt(RefFoo f) => new(new RefFoo(f.X * 2));
-
-   [Fact]
-   public void Map_with_delegate_pointer_works() {
-      var o = new RefOptional(new RefFoo(3))
-          .Map(&Double);
-
-      o.Value.X.Should().Be(6);
-   }
-
-   [Fact]
-   public void AndThen_with_delegate_pointer_works() {
-      var o = new RefOptional(new RefFoo(3))
-          .AndThen(&DoubleOpt);
-
-      o.Value.X.Should().Be(6);
-   }
-}
-
 public class RefOptional_InvokerTests {
    struct Invoker : IInvoker<RefFoo, RefFoo> {
       public RefFoo Invoke(RefFoo f) => new RefFoo(f.X * 2);
    }
-   struct StaticInvoker : IStaticInvoker<RefFoo, RefFoo> {
+   struct Invocable : IInvocable<RefFoo, RefFoo> {
       public static RefFoo Invoke(RefFoo f) => new RefFoo(f.X * 2);
    }
 
    struct InvokerOpt : IInvoker<RefFoo, RefOptional> {
       public RefOptional Invoke(RefFoo f) => new(new RefFoo(f.X * 2));
    }
-   struct StaticInvokerOpt : IStaticInvoker<RefFoo, RefOptional> {
+   struct InvocableOpt : IInvocable<RefFoo, RefOptional> {
       public static RefOptional Invoke(RefFoo f) => new(new RefFoo(f.X * 2));
    }
 
@@ -277,7 +235,7 @@ public class RefOptional_InvokerTests {
    [Fact]
    public void Map_with_IStaticInvoker_works() {
       var o = new RefOptional(new RefFoo(4))
-          .Map<StaticInvoker, RefFoo>();
+          .Map<Invocable, RefFoo>();
 
       o.Value.X.Should().Be(8);
    }
@@ -292,7 +250,7 @@ public class RefOptional_InvokerTests {
    [Fact]
    public void AndThen_with_IStaticInvoker_works() {
       var o = new RefOptional(new RefFoo(4))
-          .AndThen<StaticInvokerOpt, RefFoo>();
+          .AndThen<InvocableOpt, RefFoo>();
 
       o.Value.X.Should().Be(8);
    }

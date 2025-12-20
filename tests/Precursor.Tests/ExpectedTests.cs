@@ -104,55 +104,17 @@ public class Expected_BindTests {
       e.Value.X.Should().Be(1);
    }
 }
-public unsafe class Expected_DelegatePointerTests {
-   static Foo Double(Foo f) => new Foo(f.X * 2);
-   static Foo DoubleIn(in Foo f) => new Foo(f.X * 2);
-   static Expected DoubleExp(Foo f)
-       => new Expected(new Foo(f.X * 2));
-   static Expected DoubleExpIn(in Foo f)
-       => new Expected(new Foo(f.X * 2));
-
-   [Fact]
-   public void Map_with_delegate_pointer_works() {
-      var e = new Expected(new Foo(3))
-          .Map(&Double);
-
-      e.Value.X.Should().Be(6);
-   }
-   [Fact]
-   public void Map_with_delegate_pointer_in_parameter_works() {
-      var e = new Expected(new Foo(3))
-          .Map(&DoubleIn);
-
-      e.Value.X.Should().Be(6);
-   }
-
-   [Fact]
-   public void AndThen_with_delegate_pointer_works() {
-      var e = new Expected(new Foo(3))
-          .AndThen(&DoubleExp);
-
-      e.Value.X.Should().Be(6);
-   }
-   [Fact]
-   public void AndThen_with_delegate_pointer_in_param_works() {
-      var e = new Expected(new Foo(3))
-          .AndThen(&DoubleExpIn);
-
-      e.Value.X.Should().Be(6);
-   }
-}
 public class Expected_InvokerTests {
    struct Invoker : IInvoker<Foo, Foo> {
       public Foo Invoke(Foo f) => new Foo(f.X * 2);
    }
-   struct StaticInvoker : IStaticInvoker<Foo, Foo> {
+   struct Invocable : IInvocable<Foo, Foo> {
       public static Foo Invoke(Foo f) => new Foo(f.X * 2);
    }
    struct InvokerExp : IInvoker<Foo, Expected> {
       public Expected Invoke(Foo f) => new(new Foo(f.X * 2));
    }
-   struct StaticInvokerExp : IStaticInvoker<Foo, Expected> {
+   struct InvocableExp : IInvocable<Foo, Expected> {
       public static Expected Invoke(Foo f) => new(new Foo(f.X * 2));
    }
 
@@ -166,7 +128,7 @@ public class Expected_InvokerTests {
    [Fact]
    public void Map_with_IStaticInvoker_works() {
       var e = new Expected(new Foo(4))
-          .Map<StaticInvoker, Foo>();
+          .Map<Invocable, Foo>();
 
       e.Value.X.Should().Be(8);
    }
@@ -180,7 +142,7 @@ public class Expected_InvokerTests {
    [Fact]
    public void AndThen_with_IStaticInvoker_works() {
       var e = new Expected(new Foo(4))
-          .AndThen<StaticInvokerExp, Foo>();
+          .AndThen<InvocableExp, Foo>();
       e.Value.X.Should().Be(8);
    }
 
@@ -299,32 +261,12 @@ public class RefExpected_BindTests {
       e.Value.X.Should().Be(1);
    }
 }
-public unsafe class RefExpected_FunctionPointerTests {
-   static RefFoo Double(RefFoo f) => new RefFoo(f.X * 2);
-   static RefExpected DoubleExp(RefFoo f) => new(new RefFoo(f.X * 2));
-
-   [Fact]
-   public void Map_with_delegate_pointer_works() {
-      var e = new RefExpected(new RefFoo(3))
-          .Map(&Double);
-
-      e.Value.X.Should().Be(6);
-   }
-
-   [Fact]
-   public void AndThen_with_delegate_pointer_works() {
-      var e = new RefExpected(new RefFoo(3))
-          .AndThen(&DoubleExp);
-
-      e.Value.X.Should().Be(6);
-   }
-}
 public class RefExpected_InvokerTests {
 
    struct Invoker : IInvoker<RefFoo, RefFoo> {
       public RefFoo Invoke(RefFoo f) => new RefFoo(f.X * 2);
    }
-   struct StaticInvoker : IStaticInvoker<RefFoo, RefFoo> {
+   struct Invocable : IInvocable<RefFoo, RefFoo> {
       public static RefFoo Invoke(RefFoo f) => new RefFoo(f.X * 2);
    }
 
@@ -332,7 +274,7 @@ public class RefExpected_InvokerTests {
       public RefExpected Invoke(RefFoo f)
           => new RefExpected(new RefFoo(f.X * 2));
    }
-   struct StaticInvokerExp : IStaticInvoker<RefFoo, RefExpected> {
+   struct InvocableExp : IInvocable<RefFoo, RefExpected> {
       public static RefExpected Invoke(RefFoo f)
           => new RefExpected(new RefFoo(f.X * 2));
    }
@@ -347,7 +289,7 @@ public class RefExpected_InvokerTests {
    [Fact]
    public void Map_with_IStaticInvoker_works() {
       var e = new RefExpected(new RefFoo(4))
-          .Map<StaticInvoker, RefFoo>();
+          .Map<Invocable, RefFoo>();
 
       e.Value.X.Should().Be(8);
    }
@@ -361,7 +303,7 @@ public class RefExpected_InvokerTests {
    [Fact]
    public void AndThen_with_IStaticInvoker_works() {
       var e = new RefExpected(new RefFoo(4))
-          .AndThen<StaticInvokerExp, RefFoo>();
+          .AndThen<InvocableExp, RefFoo>();
       e.Value.X.Should().Be(8);
    }
 

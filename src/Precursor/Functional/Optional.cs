@@ -23,12 +23,6 @@ public readonly struct Optional<T> {
       value = default;
       return false;
    }
-   public unsafe Optional<X> Map<X>(delegate*<T, X> f)
-       => HasValue ? new(f(Value)) : default;
-
-   public unsafe Optional<X> Map<X>(delegate*<in T, X> f)
-       => HasValue ? new(f(Value)) : default;
-
    public Optional<X> Map<X>(Func<T, X> f)
        => HasValue ? new(f(Value)) : default;
 
@@ -38,15 +32,9 @@ public readonly struct Optional<T> {
        => HasValue ? new(f.Invoke(Value)) : default;
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public Optional<X> Map<StaticInvoker, X>()
-   where StaticInvoker : IStaticInvoker<T, X>, allows ref struct
-       => HasValue ? new(StaticInvoker.Invoke(Value)) : default;
-
-   public unsafe Optional<T> AndThen(delegate*<T, Optional<T>> f)
-       => HasValue ? f(Value) : this;
-
-   public unsafe Optional<T> AndThen(delegate*<in T, Optional<T>> f)
-       => HasValue ? f(Value) : this;
+   public Optional<X> Map<Invocable, X>()
+   where Invocable : IInvocable<T, X>, allows ref struct
+       => HasValue ? new(Invocable.Invoke(Value)) : default;
 
    public Optional<T> AndThen(Func<T, Optional<T>> f)
        => HasValue ? f(Value) : this;
@@ -57,15 +45,9 @@ public readonly struct Optional<T> {
        => HasValue ? f.Invoke(Value) : this;
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public Optional<T> AndThen<StaticInvoker>()
-   where StaticInvoker : IStaticInvoker<T, Optional<T>>, allows ref struct
-       => HasValue ? StaticInvoker.Invoke(Value) : this;
-
-   public unsafe Optional<X> AndThen<X>(delegate*<T, Optional<X>> f)
-       => HasValue ? f(Value) : default;
-
-   public unsafe Optional<X> AndThen<X>(delegate*<in T, Optional<X>> f)
-       => HasValue ? f(Value) : default;
+   public Optional<T> AndThen<Invocable>()
+   where Invocable : IInvocable<T, Optional<T>>, allows ref struct
+       => HasValue ? Invocable.Invoke(Value) : this;
 
    public Optional<X> AndThen<X>(Func<T, Optional<X>> f)
        => HasValue ? f(Value) : default;
@@ -76,9 +58,9 @@ public readonly struct Optional<T> {
        => HasValue ? f.Invoke(Value) : default;
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public Optional<X> AndThen<StaticInvoker, X>()
-   where StaticInvoker : IStaticInvoker<T, Optional<X>>, allows ref struct
-       => HasValue ? StaticInvoker.Invoke(Value) : default;
+   public Optional<X> AndThen<Invocable, X>()
+   where Invocable : IInvocable<T, Optional<X>>, allows ref struct
+       => HasValue ? Invocable.Invoke(Value) : default;
 
    public static explicit operator T(in Optional<T> n)
       => n.HasValue ? n.Value! : throw new InvalidOptionalAccessException();
@@ -106,10 +88,6 @@ where T : allows ref struct {
       value = default;
       return false;
    }
-   public unsafe RefOptional<X> Map<X>(delegate*<T, X> f)
-   where X : allows ref struct
-       => HasValue ? new(f(Value)) : default;
-
    public RefOptional<X> Map<X>(Func<T, X> f)
    where X : allows ref struct
        => HasValue ? new(f(Value)) : default;
@@ -121,13 +99,10 @@ where T : allows ref struct {
        => HasValue ? new(f.Invoke(Value)) : default;
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public RefOptional<X> Map<StaticInvoker, X>()
-   where StaticInvoker : IStaticInvoker<T, X>, allows ref struct
+   public RefOptional<X> Map<Invocable, X>()
+   where Invocable : IInvocable<T, X>, allows ref struct
    where X : allows ref struct
-       => HasValue ? new(StaticInvoker.Invoke(Value)) : default;
-
-   public unsafe RefOptional<T> AndThen(delegate*<T, RefOptional<T>> f)
-       => HasValue ? f(Value) : this;
+       => HasValue ? new(Invocable.Invoke(Value)) : default;
 
    public RefOptional<T> AndThen(Func<T, RefOptional<T>> f)
        => HasValue ? f(Value) : this;
@@ -138,13 +113,9 @@ where T : allows ref struct {
        => HasValue ? f.Invoke(Value) : this;
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public RefOptional<T> AndThen<StaticInvoker>()
-   where StaticInvoker : IStaticInvoker<T, RefOptional<T>>, allows ref struct
-       => HasValue ? StaticInvoker.Invoke(Value) : this;
-
-   public unsafe RefOptional<X> AndThen<X>(delegate*<T, RefOptional<X>> f)
-   where X : allows ref struct
-       => HasValue ? f(Value) : default;
+   public RefOptional<T> AndThen<Invocable>()
+   where Invocable : IInvocable<T, RefOptional<T>>, allows ref struct
+       => HasValue ? Invocable.Invoke(Value) : this;
 
    public RefOptional<X> AndThen<X>(Func<T, RefOptional<X>> f)
    where X : allows ref struct
@@ -157,10 +128,10 @@ where T : allows ref struct {
        => HasValue ? f.Invoke(Value) : default;
 
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public RefOptional<X> AndThen<StaticInvoker, X>()
-   where StaticInvoker : IStaticInvoker<T, RefOptional<X>>, allows ref struct
+   public RefOptional<X> AndThen<Invocable, X>()
+   where Invocable : IInvocable<T, RefOptional<X>>, allows ref struct
    where X : allows ref struct
-       => HasValue ? StaticInvoker.Invoke(Value) : default;
+       => HasValue ? Invocable.Invoke(Value) : default;
 
    public static explicit operator T(in RefOptional<T> n)
       => n.HasValue ? n.Value! : throw new InvalidOptionalAccessException();

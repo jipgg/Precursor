@@ -148,12 +148,16 @@ where SmallBuffer : struct, ISmallBuffer<SmallBuffer, T> where T : IEquatable<T>
 }
 
 public struct ValueList<T> where T : IEquatable<T> {
-   ValueList<T, SmallBuffer8<T>> _impl;
+   internal ValueList<T, SmallBuffer8<T>> _impl;
    public readonly int Count => _impl.Count;
    public readonly bool IsBufferStored => _impl.IsBufferStored;
    public ValueList() => _impl = new();
+   internal ValueList(in ValueList<T> v) => _impl = v;
    public void Add(in T item) => _impl.Add(in item);
    public void AddRange(params ReadOnlySpan<T> source) => _impl.AddRange(source);
+
+   public static implicit operator ValueList<T, SmallBuffer8<T>>(in ValueList<T> v) => v._impl;
+   public static implicit operator ValueList<T>(in ValueList<T, SmallBuffer8<T>> v) => new(v);
 
    public T this[int i] {
       get => _impl[i];

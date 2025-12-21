@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using Precursor.Storage;
-using Precursor.Functional;
 namespace Precursor.Collections;
 
 using static MethodImplOptions;
@@ -23,14 +22,14 @@ where SmallBuffer : struct, ISmallBuffer<SmallBuffer, T> {
          Debug.Assert(_count <= SmallBuffer.Length);
    }
    [MemberNotNull(nameof(_list))]
-   public void MigrateToList() {
+   internal void MigrateToList() {
       Debug.Assert(IsBufferStored);
       _list = new List<T>(SmallBuffer.Length * 2);
       _list.AddRange(SmallBuffer.AsReadOnlySpan(ref _buffer)[.._count]);
    }
 
    [MemberNotNullWhen(false, nameof(_list))]
-   public readonly bool IsBufferStored
+   internal readonly bool IsBufferStored
       => _list is null;
 
    [MethodImpl(AggressiveInlining)]

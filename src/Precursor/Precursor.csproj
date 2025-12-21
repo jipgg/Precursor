@@ -12,7 +12,7 @@
   <TargetFramework>net10.0</TargetFramework>
 
   <PackageId>Precursor</PackageId>
-  <Version>0.0.5</Version>
+  <Version>0.0.6</Version>
   <Authors>jipg</Authors>
   <PackageLicenseExpression>MIT</PackageLicenseExpression>
   <RepositoryUrl>https://github.com/jipgg/Precursor</RepositoryUrl>

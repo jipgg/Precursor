@@ -2,7 +2,10 @@ namespace Precursor.Functional;
 
 public sealed class InvalidOptionalAccessException : InvalidOperationException;
 
-public readonly struct Optional<T> {
+public readonly struct Optional<T> :
+ITruthiness<Optional<T>>,
+ICastableTo<Optional<T>, T>,
+IImplicitlyCastableFrom<Optional<T>, T> {
    public readonly T? Value;
    [MemberNotNullWhen(true, nameof(Value))]
    public bool HasValue { get; }
@@ -62,11 +65,18 @@ public readonly struct Optional<T> {
    where Invocable : IInvocable<T, Optional<X>>, allows ref struct
        => HasValue ? Invocable.Invoke(Value) : default;
 
+   public static bool operator true(in Optional<T> o) => o.HasValue;
+   public static bool operator false(in Optional<T> o) => !o.HasValue;
+   public static bool operator !(in Optional<T> o) => !o.HasValue;
+
    public static explicit operator T(in Optional<T> n)
       => n.HasValue ? n.Value! : throw new InvalidOptionalAccessException();
 }
 
-public readonly ref struct RefOptional<T>
+public readonly ref struct RefOptional<T>:
+ITruthiness<RefOptional<T>>,
+ICastableTo<RefOptional<T>, T>,
+IImplicitlyCastableFrom<RefOptional<T>, T>
 where T : allows ref struct {
    public readonly T? Value { get; }
    [MemberNotNullWhen(true, nameof(Value))]
@@ -133,8 +143,12 @@ where T : allows ref struct {
    where X : allows ref struct
        => HasValue ? Invocable.Invoke(Value) : default;
 
-   public static explicit operator T(in RefOptional<T> n)
-      => n.HasValue ? n.Value! : throw new InvalidOptionalAccessException();
+   public static bool operator true(in RefOptional<T> o) => o.HasValue;
+   public static bool operator false(in RefOptional<T> o) => !o.HasValue;
+   public static bool operator !(in RefOptional<T> o) => !o.HasValue;
+
+   public static explicit operator T(scoped in RefOptional<T> o)
+      => o.HasValue ? o.Value! : throw new InvalidOptionalAccessException();
 }
 
 public static class OptionalExtensions {

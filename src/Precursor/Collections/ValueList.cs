@@ -3,8 +3,6 @@ using System.Runtime.InteropServices;
 using Precursor.Storage;
 namespace Precursor.Collections;
 
-using static MethodImplOptions;
-
 public struct ValueList<T, SmallBuffer>
 where SmallBuffer : struct, ISmallBuffer<SmallBuffer, T> {
    internal SmallBuffer _buffer;
@@ -32,12 +30,6 @@ where SmallBuffer : struct, ISmallBuffer<SmallBuffer, T> {
    internal readonly bool IsBufferStored
       => _list is null;
 
-   [MethodImpl(AggressiveInlining)]
-   public ValueList() {
-      _count = 0;
-      _buffer = default;
-      _list = null;
-   }
    public void AddRange(params ReadOnlySpan<T> source) {
       AssertInvariant();
       if (!IsBufferStored) {

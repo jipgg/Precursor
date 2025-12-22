@@ -1,10 +1,10 @@
 namespace Precursor.Functional;
 
-public readonly struct Nil {
+public readonly struct Nil: ITruthiness<Nil> {
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static bool operator true(Nil n) => false;
+   public static bool operator true(in Nil n) => false;
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-   public static bool operator false(Nil n) => true;
+   public static bool operator false(in Nil n) => true;
    [MethodImpl(MethodImplOptions.AggressiveInlining)]
    public static bool operator !(Nil n) => true;
 
@@ -13,5 +13,3 @@ public readonly struct Nil {
       get => default;
    }
 }
-
-public sealed class NilValueException(string? message = null) : NullReferenceException(message);

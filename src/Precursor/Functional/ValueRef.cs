@@ -24,6 +24,7 @@ public readonly ref struct ReadOnlyValueRef<T> {
    [MethodImpl(AggressiveInlining)]
    public ReadOnlyValueRef(ref readonly T r) => _ref = ref r;
 
+   public static implicit operator ReadOnlyValueRef<T>(in T r) => new(in r);
    public ref readonly T Ref => ref _ref;
 
 }
